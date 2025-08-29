@@ -60,7 +60,11 @@ void rollback(string filename,int version_id){
 
     if(version_id==-1){
         //rollback to the parent.
-        currfile->active_version=currfile->active_version->parent;
+        if(currfile->active_version->parent!=nullptr){
+        currfile->active_version=currfile->active_version->parent;}
+        else{
+            cout<<"NO PARENT"<<endl;
+        }
     }
     else{
         currfile->active_version=currfile->version_map[version_id];
@@ -104,14 +108,22 @@ void getCommand(string line){
         ss>>command;
         if(command=="CREATE"){
             string filename;ss>>filename;
-            create(filename);
+            if(fileMap.find(filename)==fileMap.end()){
+                create(filename);
+            }
         }
         else if(command=="READ"){
             string filename;ss>>filename;
+            if(fileMap.find(filename)!=fileMap.end()){
             read(filename);
+            }
+            else cout<<"File not found"<<endl;
         }
         else if(command=="INSERT"){
             string filename;ss>>filename;
+            if(fileMap.find(filename)==fileMap.end()){
+                cout<<"File not found"<<endl;return;
+            }
             string newContent;getline(ss,newContent);
             newContent=newContent.substr(1);
             newContent=fileMap[filename]->active_version->get_content()+newContent;
@@ -120,6 +132,9 @@ void getCommand(string line){
         }
         else if(command=="UPDATE"){
             string filename;ss>>filename;
+            if(fileMap.find(filename)==fileMap.end()){
+                cout<<"File not found"<<endl;return;
+            }
             string newContent;getline(ss,newContent);
             newContent=newContent.substr(1);
             cout<<newContent<<endl;
@@ -127,12 +142,18 @@ void getCommand(string line){
         }
         else if(command=="SNAPSHOT"){
             string filename;ss>>filename;
+            if(fileMap.find(filename)==fileMap.end()){
+                cout<<"File not found"<<endl;return;
+            }
             string message;getline(ss,message);
             message=message.substr(1);
             snapshot(filename,message);
         }
         else if(command=="ROLLBACK"){
             string filename;ss>>filename;
+            if(fileMap.find(filename)==fileMap.end()){
+                cout<<"File not found"<<endl;return;
+            }
             int version_id;
             if (!(ss >> version_id)) {
                 version_id = -1;
@@ -141,6 +162,9 @@ void getCommand(string line){
         }
         else if(command=="HISTORY"){
             string filename;ss>>filename;
+            if(fileMap.find(filename)==fileMap.end()){
+                cout<<"File not found"<<endl;return;
+            }
             history(filename);
         }
         else if(command=="RECENT_FILES"){
@@ -148,6 +172,13 @@ void getCommand(string line){
         }
         else if(command=="BIGGEST_TREES"){
             biggesttrees();
+        }
+        else if(command=="ACTIVE_VERSION"){
+            string filename;ss>>filename;
+            if(fileMap.find(filename)==fileMap.end()){
+                cout<<"File not found"<<endl;return;
+            }
+            cout<<"ACTIVE_VERSION: "<<fileMap[filename]->active_version->get_version_id()<<endl;
         }
         else{
             cout<<"INVALID INPUT"<<endl;
@@ -164,5 +195,5 @@ int main(){
         if(line=="EXIT")break;
         getCommand(line);
     }
+    // you have to destroy all the dynamically allocated memory.
 }
-

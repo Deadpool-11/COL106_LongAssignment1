@@ -73,6 +73,4 @@ public:
     int getSize(){return size;}
     bool isEmpty(){return size==0;}
 };
-
 // for min heap, you have to just invert the comparator.
-

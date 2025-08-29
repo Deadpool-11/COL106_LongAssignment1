@@ -27,12 +27,12 @@ public:
             content=new_content;
         }
         else{
-            cout<<"IMMUTABLE";
+            cout<<"IMMUTABLE"<<endl;
         }
     }
     void set_snapshot_timestamp(time_t timestamp){
         if(snapshot_timestamp!=-1){
-            cout<<"ALREADY A SNAPSHOT";
+            cout<<"ALREADY A SNAPSHOT"<<endl;
             return;
         }
         snapshot_timestamp=timestamp;
@@ -42,7 +42,7 @@ public:
             message=new_message;
         }
         else{
-            cout<<"IMMUTABLE";
+            cout<<"IMMUTABLE"<<endl;
         }
     }
 };
