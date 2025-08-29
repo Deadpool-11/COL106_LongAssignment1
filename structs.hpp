@@ -7,12 +7,12 @@ private:
     string content ;
     string message ; // Empty if not a snapshot
     time_t created_timestamp ;
-    time_t snapshot_timestamp ; // Null if not a snapshot
+    time_t snapshot_timestamp ; // -1 if not a snapshot
 public:
     TreeNode * parent ;
     vector <TreeNode*> children ;
     TreeNode(int version_id, time_t created_timestamp, string content="", string message="")
-        : version_id(version_id), content(content), message(message), created_timestamp(created_timestamp), snapshot_timestamp(NULL), parent(nullptr) {}
+        : version_id(version_id), content(content), message(message), created_timestamp(created_timestamp), snapshot_timestamp(-1), parent(nullptr) {}
     void addChild(TreeNode* child){
         children.push_back(child);
         child->parent=this;
@@ -23,7 +23,7 @@ public:
     time_t get_snapshot_timestamp(){return snapshot_timestamp;}
     string get_message(){return message;}
     void set_content(string new_content){
-        if(snapshot_timestamp==NULL){
+        if(snapshot_timestamp==-1){
             content=new_content;
         }
         else{
@@ -31,14 +31,14 @@ public:
         }
     }
     void set_snapshot_timestamp(time_t timestamp){
-        if(snapshot_timestamp!=NULL){
+        if(snapshot_timestamp!=-1){
             cout<<"ALREADY A SNAPSHOT";
             return;
         }
         snapshot_timestamp=timestamp;
     }
     void set_message(string new_message){
-        if(snapshot_timestamp==NULL){
+        if(snapshot_timestamp==-1){
             message=new_message;
         }
         else{

@@ -28,7 +28,7 @@ void update(string filename, string newContent){
         cout<<"File not found"<<endl;return;
     }
     file* currFile=fileMap[filename];
-    if(currFile->active_version->get_snapshot_timestamp()!=NULL){
+    if(currFile->active_version->get_snapshot_timestamp()!=-1){
         TreeNode* newNode=new TreeNode(currFile->total_versions,time(0),newContent);
         currFile->total_versions++;
         currFile->version_map[currFile->total_versions-1]=newNode;
@@ -53,7 +53,7 @@ void snapshot(string filename, string message){
 void rollback(string filename,int version_id){
     //its possible to have no version_id, i will be tackling the problem by equating with -1
     file* currfile=fileMap[filename];
-    if(currfile->active_version->get_snapshot_timestamp()==NULL){
+    if(currfile->active_version->get_snapshot_timestamp()==-1){
             currfile->active_version->set_snapshot_timestamp(time(0));
     }
 // something that i added from my side. snapshoting before going to do the rollback
@@ -72,7 +72,7 @@ void history(string filename){
     file* currfile=fileMap[filename];
     map<int, TreeNode*> mapping=currfile->version_map;
     for(int i=0;i<currfile->total_versions;i++){
-        if(mapping[i]->get_snapshot_timestamp()!=NULL){
+        if(mapping[i]->get_snapshot_timestamp()!=-1){
             cout<<"VERSION_ID: "<<i
             <<" CREATION_TIMESTAMP: "<<mapping[i]->get_created_timestamp()
             <<" SNAPSHOT_TIMESTAMP: "<<mapping[i]->get_snapshot_timestamp()
