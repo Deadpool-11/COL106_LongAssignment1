@@ -12,6 +12,13 @@ The system consists of three main components:
 2. **Max Heap and Hash Map Implementation** (`classes.hpp`) - Generic max heap for priority-based operations, and a hash map for fast retrieval of Version Node as well as file object with filename in O(1) time complexity.
 3. **Main Application** (`main.cpp`) - Command-line interface and core functionality
 
+## Compilation Instructions
+
+You basically have to compile the main.cpp file and you will be able to provide instructions.
+```bash
+g++ main.cpp -o {Name of output file}
+```
+
 ## Core Components
 
 ### 1. TreeNode Structure
@@ -157,34 +164,9 @@ The system includes basic error handling for:
 - Invalid heap indices
 - Command parsing edge cases
 
-## Usage Example
 
-```bash
-CREATE myfile.txt
-WRITE myfile.txt Hello World
-SNAPSHOT myfile.txt Initial version
-WRITE myfile.txt Hello World Updated
-SHOW_VERSION myfile.txt
-ROLLBACK myfile.txt 0
-READ myfile.txt
-HISTORY myfile.txt
-```
 
-## Compilation Instructions
 
-To compile the project:
-
-```bash
-g++ -o version_control main.cpp
-```
-
-The system requires C++11 or later for proper STL container support.
-
-## Memory Management Notes
-
-- The system uses dynamic memory allocation for TreeNode and file objects
-- No explicit memory deallocation is implemented in the current version
-- In a production system, proper destructor implementation would be required
 
 ## Limitations and Potential Improvements
 
@@ -192,6 +174,3 @@ The system requires C++11 or later for proper STL container support.
 2. **Persistence**: No file system persistence - data lost when program exits
 3. **Concurrency**: No thread safety mechanisms
 4. **Error Recovery**: Limited error handling and recovery mechanisms
-5. **Performance**: Version map uses standard map instead of optimized hash map
-
-This documentation provides a comprehensive overview of the version control system implementation, covering its architecture, functionality, and usage patterns.

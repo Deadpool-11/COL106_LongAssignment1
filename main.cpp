@@ -9,12 +9,12 @@ MaxHeap<file,Comparator_time> timeHeap;
 MaxHeap<file,Comparator_vcount> versionHeap;
 
 void create(string filename){
-
     file* newFile=new file(filename);
     fileMap[filename]=newFile;
     timeHeap.insertKey(newFile);
     versionHeap.insertKey(newFile);
 }
+
 void read(string filename){
     if(fileMap.find(filename)==fileMap.end()){
         cout<<"File not found"<<endl;
@@ -23,6 +23,7 @@ void read(string filename){
         cout<<fileMap[filename]->active_version->get_content()<<endl;
     }
 }
+
 void update(string filename, string newContent){
     if(fileMap.find(filename)==fileMap.end()){
         cout<<"File not found"<<endl;return;
@@ -31,16 +32,20 @@ void update(string filename, string newContent){
     if(currFile->active_version->get_snapshot_timestamp()!=-1){
         TreeNode* newNode=new TreeNode(currFile->total_versions,time(0),newContent);
         currFile->total_versions++;
+        versionHeap.heapify(currFile);// maintaining heap even if the total_version is changed.
         currFile->version_map[currFile->total_versions-1]=newNode;
         newNode->parent=currFile->active_version;
         currFile->active_version->children.push_back(newNode);
         //currFile->active_version->set_snapshot_timestamp(time(0));
         currFile->active_version=newNode;
+        timeHeap.heapify(currFile); // maintain timeHeap (file was updated)
     }
     else{
         currFile->active_version->set_content(newContent);
+        timeHeap.heapify(currFile); // maintain timeHeap (file was updated)
     }
 }
+
 void snapshot(string filename, string message){
     if(fileMap.find(filename)==fileMap.end()){
         cout<<"File not found"<<endl;
@@ -49,27 +54,30 @@ void snapshot(string filename, string message){
     file* currFile=fileMap[filename];
     currFile->active_version->set_message(message);
     currFile->active_version->set_snapshot_timestamp(time(0));
+    timeHeap.heapify(currFile); // maintain timeHeap (snapshot time updated)
 }
+
 void rollback(string filename,int version_id){
     //its possible to have no version_id, i will be tackling the problem by equating with -1
     file* currfile=fileMap[filename];
-    if(currfile->active_version->get_snapshot_timestamp()==-1){
-            currfile->active_version->set_snapshot_timestamp(time(0));
+    if(currfile->active_version->parent==nullptr){
+        cout<<"NO PARENT"<<endl;return;
     }
-// something that i added from my side. snapshoting before going to do the rollback
+    if(currfile->active_version->get_snapshot_timestamp()==-1){
+        currfile->active_version->set_snapshot_timestamp(time(0));
+        timeHeap.heapify(currfile); // maintain timeHeap (snapshot time updated)
+    }
+    // something that i added from my side. snapshoting before going to do the rollback
 
     if(version_id==-1){
         //rollback to the parent.
-        if(currfile->active_version->parent!=nullptr){
-        currfile->active_version=currfile->active_version->parent;}
-        else{
-            cout<<"NO PARENT"<<endl;
-        }
+        currfile->active_version=currfile->active_version->parent;
     }
     else{
         currfile->active_version=currfile->version_map[version_id];
     }
     //assuming once it is snapshoted, it can never be changed by mutation.
+    timeHeap.heapify(currfile); 
 }
 
 void history(string filename){
